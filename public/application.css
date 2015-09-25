@@ -1,0 +1,18 @@
+#hit {
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+#stay {
+  float: left;
+  margin-bottom: 10px;
+}
+
+#play_again {
+  float: left;
+  margin-right: 10px;
+}
+
+
+

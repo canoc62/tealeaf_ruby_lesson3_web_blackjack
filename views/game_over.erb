@@ -1,0 +1,9 @@
+<h1>Game Over!</h1>
+
+<% if session[:money] <= 0 %>
+  <p>You have lost all your money! Please get more money to play again!</p>
+<% end %>
+<p><%=session[:username]%>, you finished with $<%=session[:money]%>. Thank you for playing <%=session[:username]%>!</p>
+
+<p><a href='/name_form'>Play Again</a></p>
+

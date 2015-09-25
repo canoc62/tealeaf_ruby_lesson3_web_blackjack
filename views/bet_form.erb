@@ -1,0 +1,10 @@
+<h3>Play Blackjack!</h3>
+
+<p> You currently have $<%=session[:money]%>.</p>
+
+<div>
+  <form action="/set_bet" method="post" id="bet">
+    <label style= "font-size:20px" >Enter bet: $<input type="text" name="bet"/></label>
+    <input type="submit" class="btn"/>
+  </form>
+</div>
