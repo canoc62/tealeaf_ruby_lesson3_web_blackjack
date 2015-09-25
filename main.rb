@@ -32,7 +32,7 @@ helpers do
   end
 
   def tie_result(msg)
-    @success = "#{session[:username]} and the dealer have tied! #{msg}"
+    @success = "#{session[:username]} and the dealer have tied! #{msg} #{session[:username]} has lost $0 and still has $#{session[:money]}."
     clear_bet
   end
 
@@ -113,6 +113,16 @@ helpers do
     "<img src='/images/cards/#{card_name}'>"
   end
 
+  def validate_link #For GET requests for /game and after
+    if !session[:username] 
+      redirect '/name_form'
+    elsif !session[:bet] 
+      redirect '/bet_form'
+    elsif session[:money] <= 0
+      redirect '/game/game_over'
+    end
+  end
+
 end
 
 before do
@@ -122,7 +132,7 @@ before do
 end
 
 get '/' do
-  if session[:username] && session[:money] <= 0
+  if session[:username] && session[:money] > 0
     redirect '/bet_form'
   else
     redirect '/name_form'
@@ -169,11 +179,7 @@ get '/bet_form' do
 end
 
 get '/game' do
-  if !session[:username] 
-    redirect '/name_form'
-  elsif !session[:bet]
-    redirect '/bet_form'
-  end
+  validate_link
 
   suits = ["Hearts", "Diamonds", "Clovers", "Spades"]
   values = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king", "ace"]
@@ -182,19 +188,24 @@ get '/game' do
   session[:player_hand] = []
   session[:dealer_hand] = []
 
-  session[:player_hand] << session[:deck].pop
-  session[:dealer_hand] << session[:deck].pop
-  session[:player_hand] << session[:deck].pop
-  session[:dealer_hand] << session[:deck].pop
-
+  2.times do 
+    session[:player_hand] << session[:deck].pop
+    session[:dealer_hand] << session[:deck].pop
+  end
+  
   blackjack?(session[:player_hand], session[:dealer_hand])
   
   erb :game
 end
 
 post '/game/player/hit' do
-  @hit_or_stay_btn = true
   session[:player_hand] << session[:deck].pop
+  redirect '/game/player'
+end
+
+get '/game/player' do
+  validate_link
+  @hit_or_stay_btn = true
   if calculate_total(session[:player_hand]) > BLACKJACK
     losing_result("BUST!")
     @hit_or_stay_btn = false
@@ -208,6 +219,7 @@ post '/game/player/stay' do
 end
 
 get '/game/dealer' do
+  validate_link
   @dealer_turn = true
 
   if calculate_total(session[:dealer_hand]) < DEALER_HIT_GOAL
