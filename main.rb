@@ -144,7 +144,7 @@ get '/name_form' do
 end
 
 post '/set_bet' do
-  if params[:bet].empty?
+  if params[:bet].empty? || params[:bet].to_i == 0
     @error = "Must bet to play."
     halt erb :bet_form
   end
