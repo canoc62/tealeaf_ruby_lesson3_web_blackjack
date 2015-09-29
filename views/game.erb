@@ -1,11 +1,17 @@
-<div id="game">
-  <h3>Play Blackjack!</h3>
+<div id="game">  
+  <%if @loser %>
+    <div class="alert alert-error"><%=@loser%></div>
+  <% end %>
+  <%if @winner %>
+     <div class="alert alert-success"><%=@winner%></div>
+  <% end %>
 
-    <p> Welcome <%=session[:username]%>! </p>
-    <p> You currently have $<%=session[:money]%>.</p>
-    <% if session[:bet] %>
-      </p>You bet $<%=session[:bet]%>.</p>
-    <% end %>
+  <h3>Play Blackjack!</h3>
+  <p> Welcome <%=session[:username]%>! </p>
+  <p> You currently have $<%=session[:money]%>.</p>
+  <% if session[:bet] %>
+    </p>You bet $<%=session[:bet]%>.</p>
+  <% end %>
 
   <div>
     <% if @ask_play_again %>
@@ -28,7 +34,7 @@
       <% else %>
         <% session[:dealer_hand].each do |card| %>
       
-        <%=display_card(card)%>
+          <%=display_card(card)%>
         <% end %>
       <% end%>
     </ul>
@@ -43,6 +49,7 @@
     <ul>
 
       <% session[:player_hand].each do |card| %>
+       
           <%=display_card(card)%>
       <% end%>
     </ul>
@@ -59,6 +66,8 @@
     </form>
   <% end %>
 </div>
+
+
 
 
 
