@@ -21,18 +21,18 @@ helpers do
 
   def winning_result(msg)
     session[:money] += session[:bet]
-    @success = "#{session[:username]} wins! #{msg} #{session[:username]} has won $#{session[:bet]} and now has $#{session[:money]}."
+    @winner = "#{session[:username]} wins! #{msg} #{session[:username]} has won $#{session[:bet]} and now has $#{session[:money]}."
     clear_bet
   end
 
   def losing_result(msg)
     session[:money] -= session[:bet]
-    @error = "#{session[:username]} loses! #{msg} #{session[:username]} has lost $#{session[:bet]} and now has $#{session[:money]}."
+    @loser = "#{session[:username]} loses! #{msg} #{session[:username]} has lost $#{session[:bet]} and now has $#{session[:money]}."
     clear_bet
   end
 
   def tie_result(msg)
-    @success = "#{session[:username]} and the dealer have tied! #{msg} #{session[:username]} has lost $0 and still has $#{session[:money]}."
+    @winner = "#{session[:username]} and the dealer have tied! #{msg} #{session[:username]} has lost $0 and still has $#{session[:money]}."
     clear_bet
   end
 
@@ -42,12 +42,15 @@ helpers do
 
     if player_total == BLACKJACK && dealer_total < BLACKJACK
       winning_result("BLACKJACK!")
+      @dealer_turn = true
       @ask_play_again = true
     elsif player_total < BLACKJACK && dealer_total == BLACKJACK
       losing_result("BLACKJACK! Dealer wins!")
+      @dealer_turn = true
       @ask_play_again = true
     elsif player_total == BLACKJACK && dealer_total == BLACKJACK
       tie_result("")
+      @dealer_turn = true
       @ask_play_again = true
     else 
       @hit_or_stay_btn = true
@@ -144,7 +147,7 @@ get '/name_form' do
 end
 
 post '/set_bet' do
-  if params[:bet].empty? || params[:bet].to_i == 0
+  if params[:bet].empty? || params[:bet].to_i <= 0
     @error = "Must bet to play."
     halt erb :bet_form
   end
@@ -160,7 +163,7 @@ post '/set_name' do
   if params[:username].empty?
     @error = "Name required."
     halt erb :name_form
-  elsif params[:money].empty?
+  elsif params[:money].empty? || params[:money].to_i <= 0
     @error = "Must have money to play."
     halt erb :name_form
   end
@@ -204,14 +207,15 @@ post '/game/player/hit' do
 end
 
 get '/game/player' do
-  validate_link
+  validate_link #activates automatically with ajax and without layout: false after two hits and bust. why?
   @hit_or_stay_btn = true
   if calculate_total(session[:player_hand]) > BLACKJACK
     losing_result("BUST!")
+    @dealer_turn = true
     @hit_or_stay_btn = false
     @ask_play_again = true
   end
-  erb :game
+  erb :game, layout: false
 end
 
 post '/game/player/stay' do
@@ -240,7 +244,7 @@ get '/game/dealer' do
     @ask_play_again = true
   end
 
-  erb :game
+  erb :game, layout: false
 end
 
 get '/game/game_over' do
