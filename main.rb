@@ -160,7 +160,7 @@ post '/set_name' do
   if params[:username].empty?
     @error = "Name required."
     halt erb :name_form
-  elsif params[:money].empty?
+  elsif params[:money].empty? || params[:money].to_i == 0
     @error = "Must have money to play."
     halt erb :name_form
   end
