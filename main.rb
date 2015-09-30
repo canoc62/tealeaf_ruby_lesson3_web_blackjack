@@ -80,7 +80,7 @@ helpers do
   def convert_value_to_number(value)
     if(value == "ace")
       numerical_value = ACE_VALUE
-    elsif (value == "jack") || (value == "queen") || (value == "king")
+    elsif %w(jack queen king).include? value#(value == "jack") || (value == "queen") || (value == "king")
       numerical_value = ROYAL_VALUE
     else
       numerical_value = value.to_i
@@ -93,7 +93,7 @@ helpers do
     if !aces_array.empty?
       if total > BLACKJACK 
         aces_array.each do |ace| 
-          total -= 10 unless total < (BLACKJACK + 1)#22
+          total -= 10 unless total <= BLACKJACK#<(BLACKJACK + 1)#22
         end
       end
     end

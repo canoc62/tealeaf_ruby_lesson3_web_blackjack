@@ -1,6 +1,7 @@
 $(document).ready(function(){
 
   $(document).on('click', '#hit', function() {
+    //debugger
     $.ajax({
       type: 'POST',
       url: '/game/player/hit'
